@@ -13,8 +13,8 @@ const HOST = '127.0.0.1';
 // var routes = require('./api/routes/Routes');
 // routes(app);
 
-app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
+app.listen(PORT);
+console.log(`Running on PORT ${PORT}`);
 // app.listen(port);
 
 // console.log('NebengServer RESTful API server started on: ' + port);
