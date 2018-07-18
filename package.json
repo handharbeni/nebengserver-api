@@ -1,0 +1,31 @@
+{
+  "name": "nebengserverapi",
+  "version": "1.0.0",
+  "description": "Server Of Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/handharbeni/nebengserver-api.git"
+  },
+  "keywords": [
+    "Domain",
+    "Hosting"
+  ],
+  "author": "Muhammad Handharbeni",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/handharbeni/nebengserver-api/issues"
+  },
+  "homepage": "https://github.com/handharbeni/nebengserver-api#readme",
+  "devDependencies": {
+    "nodemon": "^1.18.2"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "jsonparse": "^1.3.1"
+  }
+}
