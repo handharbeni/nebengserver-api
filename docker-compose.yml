@@ -1,0 +1,13 @@
+version: "2"
+services:
+  node:
+    image: "node:8"
+    user: "root"
+    working_dir: /home/mhandharbeni/Documents/NebengServer/REST_API/nebengserver-api
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./:/home/mhandharbeni/Documents/NebengServer/REST_API/nebengserver-api
+    expose:
+      - "8081"
+    command: "npm run start"
