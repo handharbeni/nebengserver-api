@@ -6,5 +6,5 @@ RUN npm install
 COPY . .
 # replace this with your application's default port
 EXPOSE 8888
-CMD [ "npm", "start" ]
+CMD [ "npm", "run","start" ]
 
