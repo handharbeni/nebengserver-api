@@ -4,6 +4,7 @@ var express = require('express'),
   bodyParser = require('body-parser');
 
 // Constants
+const PORT = 8080;
 const HOST = '0.0.0.0';
 
 // app.use(bodyParser.urlencoded({ extended: true }));
