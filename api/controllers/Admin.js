@@ -3,19 +3,31 @@ var mysql = require('mysql');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var config = require('../../config/config_admin');
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "admin_default",
-  password: "beni123",
-  database: "admin_default"
-  // host: "localhost",
-  // user: "root",
-  // password: "beni123",
-  // database: "db_nebengserver"
-});
-con.connect(function(err) {
-	if (err) throw err
-});
+var mysql_config = require('../../config/mysql_config');
+var con = mysql.createConnection(mysql_config);
+// con.connect(function(err) {
+// 	if (err) throw err
+// });
+
+function handleDisconnect() {
+  con = mysql.createConnection(mysql_config);
+  con.connect(function(err) {
+    if(err) {
+      console.log('error when connecting to db:', err);
+      setTimeout(handleDisconnect, 2000);
+    }
+  });
+  con.on('error', function(err) {
+    console.log('db error', err);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+      handleDisconnect();
+    } else {
+      throw err;
+    }
+  });
+}
+
+handleDisconnect();
 exports.register = function(req, res){
 	var hashedPassword = bcrypt.hashSync(req.body.password, 8);
 	var sQuery = "SELECT * FROM m_administrator WHERE username=?";
