@@ -133,6 +133,9 @@ exports.verified_payments = function(req, res){
 		});
 	});
 }
+exports.checkConnection = function(req, res){
+	res.send("success");
+}
 	// var token = req.headers['nebeng-token'];
 	// if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 

@@ -47,4 +47,6 @@ module.exports = function(app) {
   app.route('/admin/payments')
   		.get(admin.list_payments)
   		.post(admin.verified_payments);
+  app.route('/checkConnection')
+      .get(admin.checkConnection);
 };

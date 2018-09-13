@@ -36,7 +36,7 @@ exports.list_all_packages = function(req, res) {
 		if (results.length > 0) {
 			res.json({results});
 		}else{
-			res.json({'results':'empty'});
+			res.status(500).send({'results':'empty'});
 		}
 	});
 };
@@ -47,7 +47,7 @@ exports.list_all_themes = function(req,res){
 		if (results.length > 0) {
 			res.json({results});
 		}else{
-			res.json({'results':'empty'});
+			res.status(500).send({'results':'empty'});
 		}
 	});
 };
@@ -59,7 +59,7 @@ exports.list_all_packages_by_type = function(req, res) {
 		if (results.length > 0) {
 			res.json({results});
 		}else{
-			res.json({'results':'empty'});
+			res.status(500).send({'results':'empty'});
 		}
 	});
 };
@@ -72,7 +72,7 @@ exports.detail_packages = function(req, res){
 			var results = JSON.parse(result[0].spesifikasi);
 			res.json({results});			
 		}else{
-			res.json({'results':'empty'});
+			res.status(500).send({'results':'empty'});
 		}
 	});
 };
@@ -85,7 +85,7 @@ exports.detail_themes = function(req, res){
 			var results = JSON.parse(result[0].spesifikasi);
 			res.json({results});			
 		}else{
-			res.json({'results':'empty'});
+			res.status(500).send({'results':'empty'});
 		}
 	});
 };
@@ -96,7 +96,7 @@ exports.list_type_packages = function(req, res){
 		if (result.length > 0) {
 			res.json({results});
 		}else{
-			res.json({'result':'empty'});
+			res.status(500).send({'result':'empty'});
 		}
 	});
 };
@@ -115,7 +115,7 @@ exports.register = function(req, res){
 				"(?,?,?,?,?,?)";
 			var iValues = [req.body.first_name, req.body.last_name, req.body.company_name, req.body.email_address, req.body.phone_number, hashedPassword];
 			con.query(iQuery, iValues, function(err, result, fields){
-					if (err) return res.json(err);
+					if (err) return res.status(500).send({err});
 
 					con.query("SELECT * FROM m_akun WHERE email_address = '"+req.body.email_address+"'", function(err, result, fields){
 						var idUser = result[0].id_user;
@@ -124,7 +124,7 @@ exports.register = function(req, res){
 					});
 			});
 		}else{
-			res.json({'result':'already registered'});
+			res.status(500).send({'result':'already registered'});
 		}
 	});
 };
@@ -144,7 +144,7 @@ exports.login = function(req, res){
 			var token = jwt.sign({ id: idUser }, config.secret, {expiresIn: 86400});
 			res.json({ auth: true, token: token });
 		}else{
-			res.json({'result':'login failed'});
+			res.status(500).send({'result':'login failed'});
 		}
 	});
 };
@@ -158,7 +158,7 @@ exports.me = function(req, res){
     var sQuery = "SELECT first_name, last_name, company_name, email_address, phone_number FROM m_akun WHERE id_user=?";
     var sValues = [decoded.id];
     con.query(sQuery, sValues, function(err, result, fields){
-    	if (err) return res.json({'result':'cannot get me'});
+    	if (err) return res.status(500).send({'result':'cannot get me'});
     	res.json({result});
     });
   });
@@ -180,7 +180,7 @@ exports.me_update = function(req, res){
 				"WHERE id_user=?";
 		var uValues = [req.body.first_name, req.body.last_name, req.body.company_name, req.body.phone_number, id];
 		con.query(uQuery, uValues, function(err, result, fields){
-			if (err) return  res.json({'result':'update failed'});
+			if (err) return  res.status(500).send({'result':'update failed'});
 
 			res.json({'result':'update success'});
 		});
@@ -198,7 +198,7 @@ exports.address = function(req, res){
 		var sQuery = "SELECT * FROM m_address WHERE id_akun=?";
 		var sValues = [id]
 		con.query(sQuery, sValues, function(err, result, fields){
-			if (err) throw err
+			if (err) throw res.status(500).send({err})
 			if (result.length > 0) {
 				res.json({result});
 			}else{
@@ -231,7 +231,7 @@ exports.save_address = function(req, res){
 					res.json({'result':'Success Insert address'});
 				});
 			}else{
-				res.json({'result':'Address already use'});
+				res.status(500).send({'result':'Address already use'});
 			}
 		});
 
@@ -266,7 +266,7 @@ exports.update_address = function(req, res){
 					res.json({'result':'Success Update address'});
 				});
 			}else{
-				res.json({'result':'Cannot get address'});
+				res.status(500).send({'result':'Cannot get address'});
 			}
 		});
 	});	
@@ -300,7 +300,7 @@ exports.delete_address = function(req, res){
 					res.json({'result':'Success Delete address'});
 				});
 			}else{
-				res.json({'result':'Cannot get address'});
+				res.status(500).send({'result':'Cannot get address'});
 			}
 		});
 	});
@@ -328,7 +328,7 @@ exports.update_password = function(req, res){
 					res.json({'result':'success update password'});
 				});
 			}else{
-				res.json({'result':'password Salah'});
+				res.status(500).send({'result':'password Salah'});
 			}
 		});
 
@@ -345,14 +345,15 @@ exports.list_order = function(req, res){
 		var sQuery = "SELECT * FROM m_order "+
 					"LEFT JOIN m_paket ON m_paket.id_paket = m_order.id_paket "+
 					"LEFT JOIN m_tema ON m_tema.id_tema = m_order.id_tema "+
-					"LEFT JOIN m_typelayanan ON m_typelayanan.id_type = m_typelayanan.id_type "+
+					"LEFT JOIN m_typelayanan ON m_typelayanan.id_type = m_order.id_type "+
+					"LEFT JOIN m_domain ON m_domain.id_domain = m_order.id_domain "+
 					"WHERE id_user = ?";
 		var sValues = [id];
 		con.query(sQuery, sValues, function(err, result, fields){
 			if (result.length > 0) {
 				res.json(result);
 			}else{
-				res.json({'result':'empty'});
+				res.status(500).send({'result':'empty'});
 			}
 		});
 	});
@@ -377,7 +378,7 @@ exports.detail_order = function(req, res){
 			if (result.length > 0) {
 				res.json(result);
 			}else{
-				res.json({'result':'empty'});
+				res.status(500).send({'result':'empty'});
 			}
 		});
 	});
@@ -394,14 +395,15 @@ exports.list_payments = function(req, res){
 					"LEFT JOIN m_order ON m_order.id_order = t_payment.id_order "+
 					"LEFT JOIN m_paket ON m_paket.id_paket = m_order.id_paket "+
 					"LEFT JOIN m_tema ON m_tema.id_tema = m_order.id_tema "+
-					"LEFT JOIN m_typelayanan ON m_typelayanan.id_type = m_typelayanan.id_type "+
+					"LEFT JOIN m_typelayanan ON m_typelayanan.id_type = m_paket.id_type "+
+					"LEFT JOIN m_domain ON m_domain.id_domain = m_order.id_domain "+
 					"WHERE id_user = ?";
 		var sValues = [id];
 		con.query(sQuery, sValues, function(err, result, fields){
 			if (result.length > 0) {
 				res.json(result);
 			}else{
-				res.json({'result':'empty'});
+				res.status(500).send({'result':'empty'});
 			}			
 		});
 	});
@@ -419,14 +421,14 @@ exports.detail_payments = function(req, res){
 					"LEFT JOIN m_order ON m_order.id_order = t_payment.id_order "+
 					"LEFT JOIN m_paket ON m_paket.id_paket = m_order.id_paket "+
 					"LEFT JOIN m_tema ON m_tema.id_tema = m_order.id_tema "+
-					"LEFT JOIN m_typelayanan ON m_typelayanan.id_type = m_typelayanan.id_type "+
+					"LEFT JOIN m_typelayanan ON m_typelayanan.id_type = m_paket.id_type "+
 					"WHERE id_user = ? AND t_payment.id_payment = ?";
 		var sValues = [id, id_payments];
 		con.query(sQuery, sValues, function(err, result, fields){
 			if (result.length > 0) {
 				res.json(result);
 			}else{
-				res.json({'result':'empty'});
+				res.status(500).send({'result':'empty'});
 			}			
 		});
 	});
@@ -496,7 +498,7 @@ exports.add_order= function(req, res){
 						mode_payment];
 
 		con.query(iQuery, iValues, function(err, result, fields){
-			if (err) throw err;
+			if (err) throw res.status(500).send({err});
 			if(result){
 				var iQueryTPayment = "INSERT INTO t_payment "+
 									"("+
@@ -516,7 +518,7 @@ exports.add_order= function(req, res){
 										0,
 										expiry_date];
 				con.query(iQueryTPayment, iValuesTPayment, function(err, result, fields){
-					if (err) throw err
+					if (err) throw res.status(500).send({err});
 					if (result) {				
 						res.json({"result":"Order Berhasil Ditambahkan "+result.insertId});
 					}else{
